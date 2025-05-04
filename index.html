@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Asistente Virtual Metodológico - MVP</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+  <!-- Navbar -->
+  <nav class="bg-white shadow p-4 flex justify-between">
+    <div class="text-xl font-semibold">PUCE Asistente</div>
+    <div class="space-x-4">
+      <a href="#dashboard" class="text-gray-700 hover:text-gray-900">Dashboard</a>
+      <a href="#bibliografia" class="text-gray-700 hover:text-gray-900">Bibliografía</a>
+      <a href="#historial" class="text-gray-700 hover:text-gray-900">Historial</a>
+      <a href="#ajustes" class="text-gray-700 hover:text-gray-900">Ajustes</a>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="p-6 space-y-6">
+    <!-- Dashboard -->
+    <section id="dashboard">
+      <h2 class="text-2xl font-bold mb-4">Dashboard</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="bg-white p-4 shadow rounded">
+          <h3 class="font-semibold">Estado de mi tesis</h3>
+          <p class="text-3xl mt-2">45%</p>
+        </div>
+        <div class="bg-white p-4 shadow rounded">
+          <h3 class="font-semibold">Última interacción</h3>
+          <p class="mt-2">Validación de hipótesis - 04/05/2025</p>
+        </div>
+        <div class="bg-white p-4 shadow rounded">
+          <h3 class="font-semibold">Atajos</h3>
+          <ul class="list-disc list-inside">
+            <li><a href="#validacion" class="text-blue-600">Validar planteamiento</a></li>
+            <li><a href="#bibliografia" class="text-blue-600">Cargar bibliografía</a></li>
+            <li><a href="#busqueda" class="text-blue-600">Buscar fuentes</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Validación de Planteamiento -->
+    <section id="validacion" class="bg-white p-6 shadow rounded">
+      <h2 class="text-xl font-bold mb-4">Validación de planteamiento</h2>
+      <textarea id="texto-planteamiento" rows="4" class="w-full p-2 border rounded" placeholder="Pega aquí tu planteamiento..."></textarea>
+      <button id="btn-analizar" class="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Analizar</button>
+      <div id="resultado-validacion" class="mt-4"></div>
+    </section>
+
+    <!-- Carga de Bibliografía -->
+    <section id="bibliografia" class="bg-white p-6 shadow rounded">
+      <h2 class="text-xl font-bold mb-4">Cargar bibliografía</h2>
+      <div class="border-dashed border-2 border-gray-300 p-4 text-center">
+        <p>Arrastra y suelta archivos .bib, .ris o .pdf aquí</p>
+        <input type="file" id="upload-bib" multiple class="mt-2" />
+      </div>
+      <ul id="lista-referencias" class="mt-4 list-disc list-inside"></ul>
+    </section>
+
+    <!-- Búsqueda Académica -->
+    <section id="busqueda" class="bg-white p-6 shadow rounded">
+      <h2 class="text-xl font-bold mb-4">Buscar fuentes académicas</h2>
+      <input type="text" id="consulta-busqueda" class="w-full p-2 border rounded mb-2" placeholder="Ej: gentrificación urbana 2024" />
+      <button id="btn-buscar" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Buscar</button>
+      <ul id="resultados-busqueda" class="mt-4 list-none"></ul>
+    </section>
+
+    <!-- Historial -->
+    <section id="historial" class="bg-white p-6 shadow rounded">
+      <h2 class="text-xl font-bold mb-4">Historial de interacciones</h2>
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr>
+            <th class="border-b p-2">Fecha</th>
+            <th class="border-b p-2">Acción</th>
+            <th class="border-b p-2">Descripción</th>
+          </tr>
+        </thead>
+        <tbody id="tabla-historial"></tbody>
+      </table>
+      <button id="btn-exportar" class="mt-4 px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700">Exportar CSV</button>
+    </section>
+  </main>
+
+  <!-- Scripts de ejemplo -->
+  <script>
+    // Aquí se pueden agregar llamadas a la API para análisis y búsquedas
+  </script>
+</body>
+</html>
