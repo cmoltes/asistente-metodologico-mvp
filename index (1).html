@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Asistente Virtual Metodológico - MVP Funcionando</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+  <!-- Navbar -->
+  <nav class="bg-white shadow p-4 flex justify-between">
+    <div class="text-xl font-semibold">PUCE Asistente</div>
+    <div class="space-x-4">
+      <a href="#dashboard" class="text-gray-700 hover:text-gray-900">Dashboard</a>
+      <a href="#validacion" class="text-gray-700 hover:text-gray-900">Validar</a>
+      <a href="#bibliografia" class="text-gray-700 hover:text-gray-900">Bibliografía</a>
+      <a href="#busqueda" class="text-gray-700 hover:text-gray-900">Buscar</a>
+      <a href="#historial" class="text-gray-700 hover:text-gray-900">Historial</a>
+    </div>
+  </nav>
+
+  <main class="p-6 space-y-6">
+    <!-- Dashboard -->
+    <section id="dashboard">
+      <h2 class="text-2xl font-bold mb-4">Dashboard</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="bg-white p-4 shadow rounded">
+          <h3 class="font-semibold">Estado de mi tesis</h3>
+          <p class="text-3xl mt-2" id="estado-tesis">0%</p>
+        </div>
+        <div class="bg-white p-4 shadow rounded">
+          <h3 class="font-semibold">Última interacción</h3>
+          <p class="mt-2" id="ultima-interaccion">-</p>
+        </div>
+        <div class="bg-white p-4 shadow rounded">
+          <h3 class="font-semibold">Atajos</h3>
+          <ul class="list-disc list-inside">
+            <li><a href="#validacion" class="text-blue-600">Validar planteamiento</a></li>
+            <li><a href="#bibliografia" class="text-blue-600">Cargar bibliografía</a></li>
+            <li><a href="#busqueda" class="text-blue-600">Buscar fuentes</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Validación de Planteamiento -->
+    <section id="validacion" class="bg-white p-6 shadow rounded">
+      <h2 class="text-xl font-bold mb-4">Validación de planteamiento</h2>
+      <textarea id="texto-planteamiento" rows="4" class="w-full p-2 border rounded" placeholder="Pega aquí tu planteamiento..."></textarea>
+      <button type="button" id="btn-analizar" class="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Analizar</button>
+      <div id="resultado-validacion" class="mt-4 text-gray-800"></div>
+    </section>
+
+    <!-- Carga de Bibliografía -->
+    <section id="bibliografia" class="bg-white p-6 shadow rounded">
+      <h2 class="text-xl font-bold mb-4">Cargar bibliografía</h2>
+      <div class="border-dashed border-2 border-gray-300 p-4 text-center">
+        <p>Arrastra y suelta archivos .bib, .ris o .pdf aquí</p>
+        <input type="file" id="upload-bib" multiple class="mt-2" />
+      </div>
+      <ul id="lista-referencias" class="mt-4 list-disc list-inside text-gray-800"></ul>
+    </section>
+
+    <!-- Búsqueda Académica -->
+    <section id="busqueda" class="bg-white p-6 shadow rounded">
+      <h2 class="text-xl font-bold mb-4">Buscar fuentes académicas</h2>
+      <input type="text" id="consulta-busqueda" class="w-full p-2 border rounded mb-2" placeholder="Ej: gentrificación urbana 2024" />
+      <button type="button" id="btn-buscar" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Buscar</button>
+      <ul id="resultados-busqueda" class="mt-4 list-none text-gray-800"></ul>
+    </section>
+
+    <!-- Historial -->
+    <section id="historial" class="bg-white p-6 shadow rounded">
+      <h2 class="text-xl font-bold mb-4">Historial de interacciones</h2>
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr>
+            <th class="border-b p-2">Fecha</th>
+            <th class="border-b p-2">Acción</th>
+            <th class="border-b p-2">Descripción</th>
+          </tr>
+        </thead>
+        <tbody id="tabla-historial" class="text-gray-800"></tbody>
+      </table>
+      <button type="button" id="btn-exportar" class="mt-4 px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700">Exportar CSV</button>
+    </section>
+  </main>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Elementos
+      const estadoEl = document.getElementById('estado-tesis');
+      const ultimaEl = document.getElementById('ultima-interaccion');
+      const historial = document.getElementById('tabla-historial');
+      let progreso = 0;
+
+      function agregarHistorial(accion, descripcion) {
+        const fila = document.createElement('tr');
+        const fecha = new Date().toLocaleString();
+        fila.innerHTML = `
+          <td class="border-b p-2">${fecha}</td>
+          <td class="border-b p-2">${accion}</td>
+          <td class="border-b p-2">${descripcion}</td>
+        `;
+        historial.prepend(fila);
+        ultimaEl.textContent = `${fecha} – ${accion}`;
+      }
+
+      // Analizar planteamiento
+      document.getElementById('btn-analizar').addEventListener('click', function() {
+        const texto = document.getElementById('texto-planteamiento').value.trim();
+        const resEl = document.getElementById('resultado-validacion');
+        if (!texto) {
+          resEl.textContent = 'Por favor, ingresa tu planteamiento.';
+          return;
+        }
+        let diagnostico = texto.length < 50
+          ? 'El texto es muy corto. Expande el planteamiento definiendo claramente contexto y alcance.'
+          : 'Planteamiento válido. Considera agregar indicadores específicos para mayor rigor.';
+        if (texto.length >= 50) {
+          progreso = Math.min(100, progreso + 10);
+          estadoEl.textContent = progreso + '%';
+        }
+        resEl.textContent = diagnostico;
+        agregarHistorial('Analizar planteamiento', diagnostico);
+      });
+
+      // Carga bibliografía
+      document.getElementById('upload-bib').addEventListener('change', function(event) {
+        const files = Array.from(event.target.files);
+        const lista = document.getElementById('lista-referencias');
+        lista.innerHTML = '';
+        files.forEach(file => {
+          const li = document.createElement('li');
+          li.textContent = file.name;
+          lista.appendChild(li);
+        });
+        agregarHistorial('Cargar bibliografía', `${files.length} archivo(s) cargado(s)`);
+      });
+
+      // Búsqueda simulada
+      document.getElementById('btn-buscar').addEventListener('click', function() {
+        const query = document.getElementById('consulta-busqueda').value.trim();
+        const resultados = document.getElementById('resultados-busqueda');
+        resultados.innerHTML = '';
+        if (!query) {
+          resultados.innerHTML = '<li>Ingresa un término de búsqueda.</li>';
+          return;
+        }
+        const items = [
+          { title: 'Smith (2025) Dynamic Patterns of Urban Displacement', doi: '10.1000/xyz123' },
+          { title: 'García (2024) Metodologías cualitativas en urbanismo', doi: '10.1000/abc456' },
+          { title: 'López (2023) Indicadores urbanos para evaluación', doi: '10.1000/def789' }
+        ];
+        items.forEach(i => {
+          const li = document.createElement('li');
+          li.innerHTML = `<strong>${i.title}</strong> (<a href="https://doi.org/${i.doi}" target="_blank">${i.doi}</a>)`;
+          resultados.appendChild(li);
+        });
+        agregarHistorial('Buscar fuentes', `"${query}" -> ${items.length} resultado(s)`);
+      });
+
+      // Exportar historial CSV
+      document.getElementById('btn-exportar').addEventListener('click', function() {
+        let csv = 'Fecha,Acción,Descripción
+';
+        Array.from(historial.querySelectorAll('tr')).forEach(row => {
+          const cols = row.querySelectorAll('td');
+          csv += `${cols[0].textContent},${cols[1].textContent},${cols[2].textContent}
+`;
+        });
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'historial.csv';
+        a.click();
+        URL.revokeObjectURL(url);
+      });
+    });
+  </script>
+</body>
+</html>
